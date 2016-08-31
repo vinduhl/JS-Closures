@@ -12,12 +12,13 @@ var outer = function(){
 // Invoke outer saving the return value into another variable called 'inner'.
 
 // Code Here
+var inner = outer();
 
 
 //Once you do that, invoke inner.
 
   //Code Here
-
+inner();
 
 
 //////////////////PROBLEM 2////////////////////
@@ -25,7 +26,7 @@ var outer = function(){
 
 var callFriend = function(){
   var friend = 'Jake';
-  function callF(number){
+  function callF(number){ 
     return 'Calling ' + friend + ' at ' + number;
   }
   return callF;
@@ -36,9 +37,11 @@ var callFriend = function(){
 // Create a makeCall function that when invoked logs  'Calling Jake at 435-215-9248' in your console.
 
   //Code Here
-
-
-
+function makeCall() {
+  var call = callFriend();
+  console.log(call("435-215-9248"));
+}
+makeCall();
 
 
 
@@ -53,12 +56,21 @@ var callFriend = function(){
 
 //Code Here
 
+var makeCounter = function() {
+  var currentCount = 0;
+
+  return function() {
+    //currentCount++;
+    return ++currentCount;
+  }
+}
+
 //Uncomment this once you make your function
-//   var count = makeCounter();
-//   count(); // 1
-//   count(); // 2
-//   count(); // 3
-//   count(); // 4
+   var count = makeCounter();
+   console.log(count()); // 1
+   console.log(count()); // 2
+   console.log(count()); // 3
+   console.log(count()); // 4
 
 
 
@@ -71,17 +83,32 @@ var callFriend = function(){
 // The second function is called dec, this function is responsible for decrementing the value by one
 // You will need to use the module pattern to achieve this.
 
-function counterFactory(value) {
+var counterFactory = function (value) {
 
   // Code here.
 
+  var inc = function() {
+    value++;
+    return value;
+  }
+
+  var dec = function() {
+    value--;
+    return value;
+  }
 
   return {
+    inc: function() { return inc() },
+    dec: function() { return dec() }
   }
+
 }
 
 
-counter = counterFactory(10);
+var counter = counterFactory(10);
+console.log("counter.inc() = " + counter.inc()); // 11
+console.log("counter.inc() = " + counter.inc()); // 12
+console.log("counter.dec() = " + counter.dec()); // 11
 
 
 
@@ -96,14 +123,18 @@ counter = counterFactory(10);
     var welcomeText = 'You\'re doing awesome, keep it up ';
 
     // code message function here.
+    function message() {
+      return welcomeText + firstname + ' ' + lastname + '.';
+    }
+
 
 
     //Uncommment this to return the value of your invoked message function
 
-    //return message()
+    return message()
   }
 
-  motivation('Billy', 'Bob'); // 'Your doing awesome keep it up Billy Bob
+  console.log(motivation('Billy', 'Bob')); // 'Your doing awesome keep it up Billy Bob
 
 
 
@@ -126,13 +157,16 @@ counter = counterFactory(10);
     // Anything that is being returned is made public and can be invoked from outside our lexical scope
 
     return {
+      publicMethod: function() {
+        return privateMethod();
+      }
       // Code here.
     };
 
   })();
 
 //Uncomment this after you create your public method
-//   module.publicMethod();
+console.log(module.publicMethod());
 
 
 
@@ -143,13 +177,14 @@ counter = counterFactory(10);
 
 function timeOutCounter() {
   for (var i = 0; i <= 5; i++) {
-    setTimeout(function() {
-      console.log(i);
-    }, i * 1000)
+    var scope = newScope(i);
+    setTimeout(scope, i * 1000);
   }
 
   function newScope(i) {
-    console.log(i)
+    return function() {
+      console.log(i);
+    }
   }
 }
 timeOutCounter();
@@ -163,15 +198,26 @@ timeOutCounter();
 
 var funcArray = [];
 
+for(var i=0; i<=5; i++) {
+  funcArray[i] = createNumber(i);
+}
+
+function createNumber(num) {
+  return function() {
+    return num;
+  }
+}
+
+
 /*
   Make the following code work
-
-  funcArray[0]() //0
-  funcArray[1]() //1
-  funcArray[2]() //2
-  funcArray[3]() //3
-  funcArray[4]() //4
-  funcArray[5]() //5
-
+*/
+  console.log(funcArray[0]()); //0
+  console.log(funcArray[1]()); //1
+  console.log(funcArray[2]()); //2
+  console.log(funcArray[3]()); //3
+  console.log(funcArray[4]()); //4
+  console.log(funcArray[5]()); //5
+/*
   *Hint: Don't let this fool you. Break down what's really happening here.
 */
